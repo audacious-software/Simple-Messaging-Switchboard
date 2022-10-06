@@ -1,1 +1,1 @@
-# Simple-Messaging-Dialog-Engine-Support
+# Simple-Messaging-Switchboard
