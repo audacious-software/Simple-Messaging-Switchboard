@@ -47,8 +47,6 @@ def process_outgoing_message(outgoing_message, metadata=None):
         if (package_name in channel_packages) is False:
             channel_packages.append(package_name)
 
-    print('SKIP: %s' % channel_packages)
-
     for app in settings.INSTALLED_APPS:
         if (app in channel_packages) is False:
             try:
