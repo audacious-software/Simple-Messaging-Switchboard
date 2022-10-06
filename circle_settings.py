@@ -29,7 +29,6 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'quicksilver',
     'simple_messaging',
-    'django_dialog_engine',
     'simple_messaging_dialog_support',
 )
 
