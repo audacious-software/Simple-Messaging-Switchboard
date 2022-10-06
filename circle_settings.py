@@ -29,7 +29,6 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'quicksilver',
     'simple_messaging',
-    'simple_messaging_dialog_support',
 )
 
 MIDDLEWARE = (
@@ -43,7 +42,7 @@ MIDDLEWARE = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'simple_messaging_dialog_support.circle_urls'
+ROOT_URLCONF = 'simple_messaging_switchboard.circle_urls'
 
 TEMPLATES = [
     {
