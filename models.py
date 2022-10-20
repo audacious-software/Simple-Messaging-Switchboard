@@ -4,7 +4,6 @@ import json
 
 from six import python_2_unicode_compatible
 
-from django.conf import settings
 from django.core.checks import Error, register
 from django.db import models
 
@@ -12,7 +11,7 @@ from django.db import models
 @register()
 def check_twilio_settings_defined(app_configs, **kwargs): # pylint: disable=unused-argument
     errors = []
-    
+
     if ChannelType.objects.all().count() == 0:
         error = Error('No ChannelType objects defined.', hint='Add a ChannelType object with corresponding messaging channel type.', obj=None, id='simple_messaging_switchboard.E001')
         errors.append(error)
@@ -22,7 +21,6 @@ def check_twilio_settings_defined(app_configs, **kwargs): # pylint: disable=unus
         errors.append(error)
 
     return errors
-
 
 @python_2_unicode_compatible
 class ChannelType(models.Model):
