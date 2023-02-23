@@ -4,21 +4,25 @@ import json
 
 from six import python_2_unicode_compatible
 
-from django.core.checks import Error, register
+from django.core.checks import Warning, register # pylint: disable=redefined-builtin
 from django.db import models
+from django.db.utils import ProgrammingError
 
 
 @register()
 def check_twilio_settings_defined(app_configs, **kwargs): # pylint: disable=unused-argument
     errors = []
 
-    if ChannelType.objects.all().count() == 0:
-        error = Error('No ChannelType objects defined.', hint='Add a ChannelType object with corresponding messaging channel type.', obj=None, id='simple_messaging_switchboard.E001')
-        errors.append(error)
+    try:
+        if ChannelType.objects.all().count() == 0:
+            error = Warning('No ChannelType objects defined.', hint='Add a ChannelType object with corresponding messaging channel type.', obj=None, id='simple_messaging_switchboard.E001')
+            errors.append(error)
 
-    if Channel.objects.all().count() == 0:
-        error = Error('No Channel objects defined.', hint='Add a new messaging channel.', obj=None, id='simple_messaging_switchboard.E002')
-        errors.append(error)
+        if Channel.objects.all().count() == 0:
+            error = Warning('No Channel objects defined.', hint='Add a new messaging channel.', obj=None, id='simple_messaging_switchboard.E002')
+            errors.append(error)
+    except ProgrammingError:
+        pass # Migrations not applied
 
     return errors
 

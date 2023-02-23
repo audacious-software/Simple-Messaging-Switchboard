@@ -1,8 +1,11 @@
 # pylint: disable=line-too-long, no-member
 
 import importlib
+import json
 
 from django.conf import settings
+
+from simple_messaging.models import IncomingMessage, OutgoingMessage
 
 from .models import Channel
 
@@ -27,6 +30,16 @@ def channel_for_message(outgoing_message):
             pass
         except AttributeError:
             pass
+
+    transmission_metadata = {}
+
+    if outgoing_channel is None:
+        if outgoing_message.transmission_metadata is not None:
+            transmission_metadata = json.loads(outgoing_message.transmission_metadata)
+
+        message_channel = transmission_metadata.get('message_channel', None)
+
+        outgoing_channel = Channel.objects.filter(is_enabled=True, identifier=message_channel).first()
 
     if outgoing_channel is None:
         outgoing_channel = Channel.objects.filter(is_enabled=True, is_default=True).first()
@@ -96,3 +109,41 @@ def process_incoming_request(request): # pylint: disable=too-many-locals, too-ma
                 pass
 
     return None
+
+def simple_messaging_fetch_active_channels(): # pylint:disable=invalid-name
+    channels = []
+
+    for channel in Channel.objects.filter(is_enabled=True):
+        channels.append([channel.identifier, channel.name])
+
+    return channels
+
+def annotate_console_messages(messages):
+    incoming_cache = {}
+
+    for message in messages:
+        direction = message.get('direction', None)
+
+        if direction == 'from-system':
+            outgoing = OutgoingMessage.objects.filter(pk=message.get('message_id', -1)).first()
+
+            if outgoing is not None:
+                channel = channel_for_message(outgoing)
+
+                if channel is not None:
+                    message['channel'] = channel.identifier
+                    message['channel_name'] = channel.name
+        elif direction == 'from-user':
+            incoming = IncomingMessage.objects.filter(pk=message.get('message_id', -1)).first()
+
+            if incoming is not None:
+                for channel in Channel.objects.filter(is_enabled=True):
+                    config = incoming_cache.get(channel.identifier)
+
+                    if config is None:
+                        config = channel.fetch_configuration()
+                        incoming_cache[channel.identifier] = config
+
+                    if incoming.recipient == config.get('phone_number', ''):
+                        message['channel'] = channel.identifier
+                        message['channel_name'] = channel.name
