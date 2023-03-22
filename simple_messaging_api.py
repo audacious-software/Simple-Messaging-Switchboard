@@ -110,6 +110,28 @@ def process_incoming_request(request): # pylint: disable=too-many-locals, too-ma
 
     return None
 
+def process_incoming_message(incoming_message):
+    recipient = incoming_message.recipient
+
+    for channel in Channel.objects.filter(is_enabled=True):
+        config = channel.fetch_configuration()
+
+        phone_number = config.get('phone_number', None)
+
+        if phone_number == recipient:
+            transmission_metadata = {}
+
+            try:
+                transmission_metadata = json.loads(incoming_message.transmission_metadata)
+            except json.JSONDecodeError:
+                pass
+
+            transmission_metadata['message_channel'] = channel.identifier
+
+            incoming_message.transmission_metadata = json.dumps(transmission_metadata, indent=2)
+            incoming_message.save()
+
+
 def simple_messaging_fetch_active_channels(): # pylint:disable=invalid-name
     channels = []
 
