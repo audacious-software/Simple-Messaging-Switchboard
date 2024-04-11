@@ -9,23 +9,6 @@ from django.db import models
 from django.db.utils import ProgrammingError
 
 
-@register()
-def check_twilio_settings_defined(app_configs, **kwargs): # pylint: disable=unused-argument
-    errors = []
-
-    try:
-        if ChannelType.objects.all().count() == 0:
-            error = Warning('No ChannelType objects defined.', hint='Add a ChannelType object with corresponding messaging channel type.', obj=None, id='simple_messaging_switchboard.E001')
-            errors.append(error)
-
-        if Channel.objects.all().count() == 0:
-            error = Warning('No Channel objects defined.', hint='Add a new messaging channel.', obj=None, id='simple_messaging_switchboard.E002')
-            errors.append(error)
-    except ProgrammingError:
-        pass # Migrations not applied
-
-    return errors
-
 @python_2_unicode_compatible
 class ChannelType(models.Model):
     name = models.CharField(max_length=1024, unique=True)
@@ -65,3 +48,20 @@ class Channel(models.Model):
         metadata.update(self.fetch_configuration())
 
         return app_module.process_outgoing_message(outgoing_message, metadata=metadata)
+
+@register()
+def check_twilio_settings_defined(app_configs, **kwargs): # pylint: disable=unused-argument
+    errors = []
+
+    try:
+        if ChannelType.objects.all().count() == 0:
+            error = Warning('No ChannelType objects defined.', hint='Add a ChannelType object with corresponding messaging channel type.', obj=None, id='simple_messaging_switchboard.E001')
+            errors.append(error)
+
+        if Channel.objects.all().count() == 0:
+            error = Warning('No Channel objects defined.', hint='Add a new messaging channel.', obj=None, id='simple_messaging_switchboard.E002')
+            errors.append(error)
+    except ProgrammingError:
+        pass # Migrations not applied
+
+    return errors
