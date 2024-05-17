@@ -34,7 +34,7 @@ jobs:
             . /home/circleci/venv/bin/activate
             pip install --upgrade pip
             pip install --upgrade wheel
-            pip install -r requirements.txt --progress-bar off
+            pip install -r requirements.txt
             cd ..
             mv project simple_messaging_switchboard
             mkdir django
@@ -43,21 +43,25 @@ jobs:
             mv ../simple_messaging_switchboard smsb
             cd smsb
             git clone https://github.com/audacious-software/Simple-Messaging-Django.git simple_messaging
-            pip install -r simple_messaging/requirements.txt --progress-bar off
+            pip install -r simple_messaging/requirements.txt
+            git clone https://github.com/audacious-software/Simple-Dashboard-Django.git simple_dashboard
+            pip install -r simple_dashboard/requirements.txt
             git clone https://github.com/audacious-software/Quicksilver-Django.git quicksilver
-            pip install -r quicksilver/requirements.txt --progress-bar off
+            pip install -r quicksilver/requirements.txt
             cp simple_messaging_switchboard/circle_settings.py smsb/settings.py
             cp simple_messaging_switchboard/circle_urls.py smsb/urls.py
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
             python manage.py migrate
+            python manage.py install_quicksilver_tasks
+            python manage.py simple_dashboard_update_values
             python manage.py test
             cp simple_messaging_switchboard/.pylintrc .
             pylint quicksilver
             pylint simple_messaging
             pylint simple_messaging_switchboard
-            bandit -r .      
+            bandit -r .
       - save_cache:
           key: venv-38-{{ .Branch }}-{{ checksum "/home/circleci/django/smsb/simple_messaging_switchboard/requirements.txt" }}
           paths:
@@ -91,7 +95,7 @@ jobs:
             . /home/circleci/venv/bin/activate
             pip install --upgrade pip
             pip install --upgrade wheel
-            pip install -r requirements.txt --progress-bar off
+            pip install -r requirements.txt
             cd ..
             mv project simple_messaging_switchboard
             mkdir django
@@ -100,21 +104,25 @@ jobs:
             mv ../simple_messaging_switchboard smsb
             cd smsb
             git clone https://github.com/audacious-software/Simple-Messaging-Django.git simple_messaging
-            pip install -r simple_messaging/requirements.txt --progress-bar off
+            pip install -r simple_messaging/requirements.txt
+            git clone https://github.com/audacious-software/Simple-Dashboard-Django.git simple_dashboard
+            pip install -r simple_dashboard/requirements.txt
             git clone https://github.com/audacious-software/Quicksilver-Django.git quicksilver
-            pip install -r quicksilver/requirements.txt --progress-bar off
+            pip install -r quicksilver/requirements.txt
             cp simple_messaging_switchboard/circle_settings.py smsb/settings.py
             cp simple_messaging_switchboard/circle_urls.py smsb/urls.py
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
             python manage.py migrate
+            python manage.py install_quicksilver_tasks
+            python manage.py simple_dashboard_update_values
             python manage.py test
             cp simple_messaging_switchboard/.pylintrc .
             pylint quicksilver
             pylint simple_messaging
             pylint simple_messaging_switchboard
-            bandit -r .      
+            bandit -r .
       - save_cache:
           key: venv-38-{{ .Branch }}-{{ checksum "/home/circleci/django/smsb/simple_messaging_switchboard/requirements.txt" }}
           paths:
@@ -148,7 +156,7 @@ jobs:
             . /home/circleci/venv/bin/activate
             pip install --upgrade pip
             pip install --upgrade wheel
-            pip install -r requirements.txt --progress-bar off
+            pip install -r requirements.txt
             cd ..
             mv project simple_messaging_switchboard
             mkdir django
@@ -157,21 +165,25 @@ jobs:
             mv ../simple_messaging_switchboard smsb
             cd smsb
             git clone https://github.com/audacious-software/Simple-Messaging-Django.git simple_messaging
-            pip install -r simple_messaging/requirements.txt --progress-bar off
+            pip install -r simple_messaging/requirements.txt
+            git clone https://github.com/audacious-software/Simple-Dashboard-Django.git simple_dashboard
+            pip install -r simple_dashboard/requirements.txt
             git clone https://github.com/audacious-software/Quicksilver-Django.git quicksilver
-            pip install -r quicksilver/requirements.txt --progress-bar off
+            pip install -r quicksilver/requirements.txt
             cp simple_messaging_switchboard/circle_settings.py smsb/settings.py
             cp simple_messaging_switchboard/circle_urls.py smsb/urls.py
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
             python manage.py migrate
+            python manage.py install_quicksilver_tasks
+            python manage.py simple_dashboard_update_values
             python manage.py test
             cp simple_messaging_switchboard/.pylintrc .
             pylint quicksilver
             pylint simple_messaging
             pylint simple_messaging_switchboard
-            bandit -r .       
+            bandit -r .
       - save_cache:
           key: venv-27-{{ .Branch }}-{{ checksum "/home/circleci/django/smsb/simple_messaging_switchboard/requirements.txt" }}
           paths:
