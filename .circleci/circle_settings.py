@@ -44,7 +44,7 @@ MIDDLEWARE = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'simple_messaging_switchboard.circle_urls'
+ROOT_URLCONF = 'smsb.urls'
 
 TEMPLATES = [
     {
