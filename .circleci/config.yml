@@ -109,8 +109,8 @@ jobs:
             pip install -r simple_dashboard/requirements.txt
             git clone https://github.com/audacious-software/Quicksilver-Django.git quicksilver
             pip install -r quicksilver/requirements.txt
-            cp .circleci/circle_settings.py smsb/settings.py
-            cp .circleci/circle_urls.py smsb/urls.py
+            cp simple_messaging_switchboard/.circleci/circle_settings.py smsb/settings.py
+            cp simple_messaging_switchboard/.circleci/circle_urls.py smsb/urls.py
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
@@ -170,8 +170,8 @@ jobs:
             pip install -r simple_dashboard/requirements.txt
             git clone https://github.com/audacious-software/Quicksilver-Django.git quicksilver
             pip install -r quicksilver/requirements.txt
-            cp .circleci/circle_settings.py smsb/settings.py
-            cp .circleci/circle_urls.py smsb/urls.py
+            cp simple_messaging_switchboard/.circleci/circle_settings.py smsb/settings.py
+            cp simple_messaging_switchboard/.circleci/circle_urls.py smsb/urls.py
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
