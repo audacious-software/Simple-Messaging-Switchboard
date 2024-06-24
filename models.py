@@ -45,7 +45,19 @@ class Channel(models.Model):
 
         app_module = importlib.import_module('.simple_messaging_api', package=self.channel_type.package_name)
 
-        metadata.update(self.fetch_configuration())
+        channel_config = self.fetch_configuration()
+
+        metadata.update(channel_config)
+
+        prefix = channel_config.get('prefix', None)
+
+        if prefix is not None:
+            destination = outgoing_message.current_destination()
+
+            if destination.startswith(prefix) is False:
+                dest_tokens = destination.split(':')
+
+                metadata['destination'] = '%s:%s' % (prefix, dest_tokens[-1])
 
         return app_module.process_outgoing_message(outgoing_message, metadata=metadata)
 
@@ -61,6 +73,31 @@ def check_twilio_settings_defined(app_configs, **kwargs): # pylint: disable=unus
         if Channel.objects.all().count() == 0:
             error = Warning('No Channel objects defined.', hint='Add a new messaging channel.', obj=None, id='simple_messaging_switchboard.E002')
             errors.append(error)
+    except ProgrammingError:
+        pass # Migrations not applied
+
+    return errors
+
+@register()
+def check_channel_prefixes(app_configs, **kwargs): # pylint: disable=unused-argument
+    errors = []
+
+    try:
+        for channel in Channel.objects.all():
+            config = channel.fetch_configuration()
+
+            phone_number = config.get('phone_number', '')
+
+            tokens = phone_number.split(':')
+
+            if len(tokens) > 1:
+                expected_prefix = tokens[0]
+
+                prefix = config.get('prefix', None)
+
+                if prefix is None or prefix != expected_prefix:
+                    error = Warning('Channel "%s" with phone number defined with "%s" prefix, but no "prefix" option included with channel configuration.' % (channel, expected_prefix), hint='Add "prefix": "%s" to channel configuration.' % expected_prefix, obj=None, id='simple_messaging_switchboard.W001')
+                    errors.append(error)
     except ProgrammingError:
         pass # Migrations not applied
 
