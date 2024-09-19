@@ -102,3 +102,21 @@ def check_channel_prefixes(app_configs, **kwargs): # pylint: disable=unused-argu
         pass # Migrations not applied
 
     return errors
+
+@register()
+def check_channel_phone_numbers(app_configs, **kwargs): # pylint: disable=unused-argument
+    errors = []
+
+    try:
+        for channel in Channel.objects.all():
+            config = channel.fetch_configuration()
+
+            phone_number = config.get('phone_number', None)
+
+            if phone_number is None:
+                error = Warning('Channel "%s" has no defined "phone_number" parameter.' % channel, hint='Add "phone_number" to channel configuration, even if this is a loopback channel.', obj=None, id='simple_messaging_switchboard.W002')
+                errors.append(error)
+    except ProgrammingError:
+        pass # Migrations not applied
+
+    return errors

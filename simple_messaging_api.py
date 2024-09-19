@@ -135,7 +135,7 @@ def process_incoming_message(incoming_message):
 def simple_messaging_fetch_active_channels(): # pylint:disable=invalid-name
     channels = []
 
-    for channel in Channel.objects.filter(is_enabled=True):
+    for channel in Channel.objects.filter(is_enabled=True).order_by('is_default', 'name'):
         channels.append([channel.identifier, channel.name])
 
     return channels
