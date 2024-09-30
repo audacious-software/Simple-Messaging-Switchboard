@@ -1,4 +1,4 @@
-def simple_messaging_export_fields(data_type):
+def simple_data_export_fields(data_type):
     if data_type == 'simple_messaging.conversation_transcripts': # or link click export
         return [
             'Simple Messaging Switchboard: Channel',
@@ -6,7 +6,7 @@ def simple_messaging_export_fields(data_type):
 
     return []
 
-def simple_messaging_export_field_values(data_type, message, extra_fields): # pylint: disable=invalid-name
+def simple_data_export_field_values(data_type, message, extra_fields): # pylint: disable=invalid-name
     if data_type == 'simple_messaging.conversation_transcripts':
         values = {}
 
