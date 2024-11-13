@@ -35,7 +35,12 @@ def channel_for_message(outgoing_message):
 
     if outgoing_channel is None:
         if outgoing_message.transmission_metadata is not None:
-            transmission_metadata = json.loads(outgoing_message.transmission_metadata)
+            transmission_metadata = {}
+
+            try:
+                transmission_metadata = json.loads(outgoing_message.transmission_metadata)
+            except json.decoder.JSONDecodeError:
+                pass
 
         message_channel = transmission_metadata.get('message_channel', None)
 
