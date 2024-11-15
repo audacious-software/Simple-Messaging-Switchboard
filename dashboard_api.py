@@ -61,34 +61,39 @@ def update_dashboard_signal_value(signal_name):
 
         channel = Channel.objects.filter(pk=signal.configuration['channel_id']).first()
 
-        configuration = json.loads(channel.configuration)
+        if channel is not None:
+            configuration = json.loads(channel.configuration)
 
-        if signal is not None and channel is not None:
-            if channel.channel_type.package_name == 'simple_messaging_twilio':
-                try:
-                    from simple_messaging_twilio import dashboard_api
+            if signal is not None and channel is not None:
+                if channel.channel_type.package_name == 'simple_messaging_twilio':
+                    try:
+                        from simple_messaging_twilio import dashboard_api
 
-                    client_id = configuration.get('client_id', 'missing-client-id')
-                    auth_token = configuration.get('auth_token', 'missing-auth-token')
-                    phone_number = configuration.get('phone_number', 'missing-phone-number')
+                        client_id = configuration.get('client_id', 'missing-client-id')
+                        auth_token = configuration.get('auth_token', 'missing-auth-token')
+                        phone_number = configuration.get('phone_number', 'missing-phone-number')
 
-                    root_client_id = configuration.get('root_client_id', 'missing-phone-number')
-                    root_auth_token = configuration.get('root_auth_token', 'missing-phone-number')
+                        root_client_id = configuration.get('root_client_id', 'missing-phone-number')
+                        root_auth_token = configuration.get('root_auth_token', 'missing-phone-number')
 
-                    return dashboard_api.update_dashboard_signal_value('Twilio: %s' % configuration.get('phone_number', ''), client_id=client_id, auth_token=auth_token, phone_number=phone_number, root_client_id=root_client_id, root_auth_token=root_auth_token)
-                except ImportError:
-                    pass
-                except AttributeError:
-                    pass
+                        return dashboard_api.update_dashboard_signal_value('Twilio: %s' % configuration.get('phone_number', ''), client_id=client_id, auth_token=auth_token, phone_number=phone_number, root_client_id=root_client_id, root_auth_token=root_auth_token)
+                    except ImportError:
+                        pass
+                    except AttributeError:
+                        pass
 
-            if channel.channel_type.package_name == 'simple_messaging_azure':
-                try:
-                    from simple_messaging_twilio import dashboard_api
+                if channel.channel_type.package_name == 'simple_messaging_azure':
+                    try:
+                        from simple_messaging_twilio import dashboard_api
 
-                    return None # dashboard_api.dashboard_template('Azure: %s' % configuration.get('phone_number', ''))
-                except ImportError:
-                    pass
-                except AttributeError:
-                    pass
+                        return None # dashboard_api.dashboard_template('Azure: %s' % configuration.get('phone_number', ''))
+                    except ImportError:
+                        pass
+                    except AttributeError:
+                        pass
+        else:
+            signal.active = False
+            signal.configuration['disabled_reason'] = 'No channel found with channel ID "%s".' % signal.configuration['channel_id']
+            signal.save()
 
     return None
