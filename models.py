@@ -82,11 +82,14 @@ def check_twilio_settings_defined(app_configs, **kwargs): # pylint: disable=unus
 def check_channel_package(app_configs, **kwargs): # pylint: disable=unused-argument
     errors = []
 
-    for channel in ChannelType.objects.all():
-        if (channel.package_name in settings.INSTALLED_APPS) is False:
-            error = Error('"%s" set as a channel type, but is not present in settings.INSTALLED_APP' % channel.package_name, hint='Add "%s" to INSTALLED_APPS.' % channel.package_name, obj=None, id='simple_messaging_switchboard.E003')
+    try:
+        for channel in ChannelType.objects.all():
+            if (channel.package_name in settings.INSTALLED_APPS) is False:
+                error = Error('"%s" set as a channel type, but is not present in settings.INSTALLED_APP' % channel.package_name, hint='Add "%s" to INSTALLED_APPS.' % channel.package_name, obj=None, id='simple_messaging_switchboard.E003')
 
-            errors.append(error)
+                errors.append(error)
+    except ProgrammingError:
+        pass # Migrations not applied
 
     return errors
 
