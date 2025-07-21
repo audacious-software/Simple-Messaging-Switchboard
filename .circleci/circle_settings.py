@@ -6,7 +6,7 @@ Settings.py for testing on Circle CI.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import sys
+import tempfile
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -93,7 +93,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-SILENCED_SYSTEM_CHECKS = ['simple_messaging.W002']
+SILENCED_SYSTEM_CHECKS = [
+    'simple_messaging.W002',
+    'simple_messaging_switchboard.E001',
+    'simple_messaging_switchboard.E002',
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
@@ -104,8 +108,12 @@ STATIC_ROOT = 'static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = str(BASE_DIR) + '/media/'
 
+QUICKSILVER_LOCK_DIR = tempfile.gettempdir()
+
 SIMPLE_DATA_EXPORTER_OBFUSCATE_IDENTIFIERS = True
 SIMPLE_DATA_EXPORTER_SITE_NAME = 'Simple Messaging Site'
+
+SIMPLE_DASHBOARD_SITE_NAME = SIMPLE_DATA_EXPORTER_SITE_NAME
 
 SIMPLE_MESSAGING_COUNTRY_CODE = 'US'
 
