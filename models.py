@@ -62,7 +62,7 @@ class Channel(models.Model):
         return app_module.process_outgoing_message(outgoing_message, metadata=metadata)
 
 @register()
-def check_twilio_settings_defined(app_configs, **kwargs): # pylint: disable=unused-argument
+def check_channel_type_defined(app_configs, **kwargs): # pylint: disable=unused-argument
     errors = []
 
     try:
@@ -131,6 +131,32 @@ def check_channel_phone_numbers(app_configs, **kwargs): # pylint: disable=unused
             if phone_number is None:
                 error = Warning('Channel "%s" has no defined "phone_number" parameter.' % channel, hint='Add "phone_number" to channel configuration, even if this is a loopback channel.', obj=None, id='simple_messaging_switchboard.W002')
                 errors.append(error)
+    except ProgrammingError:
+        pass # Migrations not applied
+
+    return errors
+
+@register()
+def check_install_order(app_configs, **kwargs): # pylint: disable=unused-argument
+    errors = []
+
+    switchboard_seen = False
+
+    try: # pylint: disable=too-many-nested-blocks
+        for app in settings.INSTALLED_APPS:
+            if app == 'simple_messaging_switchboard':
+                switchboard_seen = True
+            else:
+                try:
+                    simple_messaging_api = importlib.import_module('.simple_messaging_api', package=app)
+
+                    if switchboard_seen is False:
+                        if hasattr(simple_messaging_api, 'process_incoming_message'):
+                            error = Warning('Django app "%s" included before simple_messaging_switchboard. ' % app, hint='Verify order of settings.INSTALLED_APPS.', obj=None, id='simple_messaging_switchboard.W003')
+                            errors.append(error)
+                except: # pylint: disable=bare-except
+                    pass
+
     except ProgrammingError:
         pass # Migrations not applied
 
