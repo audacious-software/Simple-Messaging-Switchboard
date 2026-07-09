@@ -154,7 +154,7 @@ def check_install_order(app_configs, **kwargs): # pylint: disable=unused-argumen
                         if hasattr(simple_messaging_api, 'process_incoming_message'):
                             error = Warning('Django app "%s" included before simple_messaging_switchboard. ' % app, hint='Verify order of settings.INSTALLED_APPS.', obj=None, id='simple_messaging_switchboard.W003')
                             errors.append(error)
-                except: # pylint: disable=bare-except
+                except: # pylint: disable=bare-except # nosec
                     pass
 
     except ProgrammingError:
