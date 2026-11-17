@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  python: circleci/python@1.2
+  python: circleci/python@4.0.1
 
 workflows:
   build:
@@ -57,6 +57,7 @@ jobs:
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
+            mkdir -p media/simple_messaging_vcf_files
             python manage.py migrate
             python manage.py install_quicksilver_tasks
             python manage.py simple_dashboard_update_values
@@ -118,6 +119,7 @@ jobs:
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
+            mkdir -p media/simple_messaging_vcf_files
             python manage.py migrate
             python manage.py install_quicksilver_tasks
             python manage.py simple_dashboard_update_values
@@ -179,6 +181,7 @@ jobs:
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
+            mkdir -p media/simple_messaging_vcf_files
             python manage.py migrate
             python manage.py install_quicksilver_tasks
             python manage.py simple_dashboard_update_values
@@ -240,6 +243,7 @@ jobs:
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
+            mkdir -p media/simple_messaging_vcf_files
             python manage.py migrate
             python manage.py install_quicksilver_tasks
             python manage.py simple_dashboard_update_values
@@ -301,6 +305,7 @@ jobs:
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
+            mkdir -p media/simple_messaging_vcf_files
             python manage.py migrate
             python manage.py install_quicksilver_tasks
             python manage.py simple_dashboard_update_values
@@ -362,6 +367,7 @@ jobs:
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
+            mkdir -p media/simple_messaging_vcf_files
             python manage.py migrate
             python manage.py install_quicksilver_tasks
             python manage.py simple_dashboard_update_values
@@ -423,6 +429,7 @@ jobs:
             mkdir -p media/simple_data_export_uploads
             mkdir -p media/incoming_message_media
             mkdir -p media/outgoing_message_media
+            mkdir -p media/simple_messaging_vcf_files
             python manage.py migrate
             python manage.py install_quicksilver_tasks
             python manage.py simple_dashboard_update_values
