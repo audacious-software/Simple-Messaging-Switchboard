@@ -1,6 +1,9 @@
 # pylint: disable=line-too-long, no-member
 import importlib
 import json
+import os
+
+import requests
 
 from six import python_2_unicode_compatible
 
@@ -29,6 +32,8 @@ class Channel(models.Model):
     is_default = models.BooleanField(default=False)
 
     configuration = models.TextField(default='{}')
+
+    virtual_contact_file = models.FileField(upload_to='simple_messaging_vcf_files', null=True, blank=True)
 
     def fetch_configuration(self):
         return json.loads(self.configuration)
@@ -159,5 +164,41 @@ def check_install_order(app_configs, **kwargs): # pylint: disable=unused-argumen
 
     except ProgrammingError:
         pass # Migrations not applied
+
+    return errors
+
+@register()
+def check_media_upload_protected(app_configs, **kwargs): # pylint: disable=unused-argument
+    errors = []
+
+    if 'simple_messaging_switchboard.W002' in settings.SILENCED_SYSTEM_CHECKS or 'simple_messaging_switchboard.E002' in settings.SILENCED_SYSTEM_CHECKS:
+        return errors
+
+    http_url = 'https://%s%ssimple_messaging_vcf_files' % (settings.ALLOWED_HOSTS[0], settings.MEDIA_URL,)
+
+    try:
+        response = requests.get(http_url, timeout=300)
+
+        if (200 <= response.status_code < 400) and len(response.text) > 0: # pylint: disable=len-as-condition
+            error = Error('Incoming media folder is readable over HTTP', hint='Update webserver configuration to deny read access (' + http_url + ') via HTTP(S).', obj=None, id='simple_messaging_switchboard.E002')
+
+            errors.append(error)
+    except: # pylint: disable=bare-except
+        warning = Warning('Unable to connect to %s' % http_url, hint='Verify that the webserver is properly configured.', obj=None, id='simple_messaging_switchboard.W002') # pylint: disable=consider-using-f-string
+
+        errors.append(warning)
+
+    return errors
+
+@register()
+def check_media_upload_available(app_configs, **kwargs): # pylint: disable=unused-argument
+    errors = []
+
+    folder_path = os.path.join(settings.MEDIA_ROOT, 'simple_messaging_vcf_files')
+
+    if os.path.exists(folder_path) is False:
+        error = Error('Raw VCF folder is missing', hint='Verify that the folder for media files (' + folder_path + ') is present on the local filesystem.', obj=None, id='simple_messaging_switchboard.E003')
+
+        errors.append(error)
 
     return errors
