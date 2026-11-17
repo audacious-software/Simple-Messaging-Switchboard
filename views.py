@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import Channel
 
-def simple_messaging_channel_vcf(request, identifier): # pylint: disable=missing-final-newline
+def simple_messaging_channel_vcf(request, identifier): # pylint: disable=unused-argument
     channel = get_object_or_404(Channel, identifier=identifier)
 
     if channel.virtual_contact_file:
